@@ -137,3 +137,20 @@ body{
   font-size: 10px;
   opacity: 0.4;
 }
+.f-info-socials a{
+    margin:0 12px;
+    font-size:24px;
+    color:#333;
+    transition:0.3s;
+}
+
+.f-info-socials a:hover{
+    color:#ff385c;
+    transform:scale(1.2);
+}
+
+/* logo */
+.logo{
+height:53px;
+border-radius: 18px;
+}
