@@ -89,7 +89,8 @@ app.use("/listings/:id/reviews", reviewsRouter);
 
 // Home Route
 app.get("/", (req, res) => {
-  res.send("Working the route");
+  // res.send("Working the route");
+   res.redirect('/listings');
 });
 
 
