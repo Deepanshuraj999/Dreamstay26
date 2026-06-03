@@ -44,50 +44,19 @@ referrerpolicy="no-referrer"
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.17.0-beta.1/mapbox-gl.js"></script>
 <!-- ===== DREAM STAY CHATBOT ===== -->
 <style>
-  :root {
-    --gold: #c9a84c; --gold-light: #e8c97a;
-    --dark: #0f0d0a; --mid: #1e1a14; --card: #2a2318;
-    --cream: #f0ead8; --muted: #9a8f7a; --border: #3a3228;
-  }
-  #chat-bubble {
-    position: fixed; bottom: 28px; right: 28px;
-    width: 58px; height: 58px; border-radius: 50%;
-    background: var(--gold); border: none; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 24px; box-shadow: 0 4px 20px rgba(201,168,76,0.35);
-    transition: transform 0.2s; z-index: 1000;
-  }
+  :root { --gold: #c9a84c; --dark: #0f0d0a; --mid: #1e1a14; --card: #2a2318; --cream: #f0ead8; --muted: #9a8f7a; --border: #3a3228; }
+  #chat-bubble { position: fixed; bottom: 28px; right: 28px; width: 58px; height: 58px; border-radius: 50%; background: var(--gold); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 20px rgba(201,168,76,0.35); transition: transform 0.2s; z-index: 1000; }
   #chat-bubble:hover { transform: scale(1.08); }
-  #chat-window {
-    position: fixed; bottom: 100px; right: 28px;
-    width: 380px; max-height: 580px; background: var(--mid);
-    border: 1px solid var(--border); border-radius: 18px;
-    display: flex; flex-direction: column; overflow: hidden;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.6); z-index: 999;
-    transition: opacity 0.25s, transform 0.25s;
-  }
+  #chat-window { position: fixed; bottom: 100px; right: 28px; width: 380px; max-height: 580px; background: var(--mid); border: 1px solid var(--border); border-radius: 18px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.6); z-index: 999; transition: opacity 0.25s, transform 0.25s; }
   #chat-window.hidden { opacity: 0; transform: translateY(16px) scale(0.97); pointer-events: none; }
-  .cb-head {
-    background: var(--card); padding: 14px 18px;
-    display: flex; align-items: center; gap: 12px;
-    border-bottom: 1px solid var(--border);
-  }
-  .cb-logo {
-    width: 40px; height: 40px; border-radius: 50%;
-    background: var(--gold); display: flex; align-items: center;
-    justify-content: center; font-family: 'Cormorant Garamond', serif;
-    font-size: 17px; font-weight: 600; color: var(--dark); flex-shrink: 0;
-  }
-  .cb-name { font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 600; color: var(--cream); }
+  .cb-head { background: var(--card); padding: 14px 18px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); }
+  .cb-logo { width: 40px; height: 40px; border-radius: 50%; background: var(--gold); display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 600; color: var(--dark); flex-shrink: 0; }
+  .cb-name { font-size: 16px; font-weight: 600; color: var(--cream); }
   .cb-status { font-size: 11px; color: var(--muted); margin-top: 1px; }
   .cb-online { width: 8px; height: 8px; background: #4caf73; border-radius: 50%; margin-left: auto; flex-shrink: 0; }
   .cb-close { background: none; border: none; color: var(--muted); font-size: 20px; cursor: pointer; padding: 0 0 0 8px; }
   .cb-close:hover { color: var(--cream); }
-  #cb-msgs {
-    flex: 1; overflow-y: auto; padding: 14px;
-    display: flex; flex-direction: column; gap: 10px;
-    scrollbar-width: thin; scrollbar-color: var(--border) transparent;
-  }
+  #cb-msgs { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
   .msg { max-width: 84%; padding: 10px 14px; font-size: 13.5px; line-height: 1.6; animation: fadeUp 0.22s ease; white-space: pre-line; }
   .msg.bot { background: var(--card); color: var(--cream); border-radius: 14px 14px 14px 3px; align-self: flex-start; border: 1px solid var(--border); }
   .msg.user { background: var(--gold); color: var(--dark); border-radius: 14px 14px 3px 14px; align-self: flex-end; font-weight: 500; }
@@ -135,17 +104,18 @@ const chatWin = document.getElementById('chat-window');
 let chatOpened = false;
 
 const flow = {
-  start: { bot: "Welcome to Dream Stay ✦\nYour luxury stay begins here.\n\nHow may I assist you today?", chips: ["🏨 Book a Room", "📅 Check Availability", "💰 View Prices", "📞 Contact Hotel"] },
+  start: { bot: "Welcome to Dream Stay ✦\nYour luxury stay begins here.\n\nHow may I assist you today?", chips: ["🏨 Book a Room", "📅 Check Availability", "💰 View Prices", "📞 Contact Hotel", "👨‍💻 Meet Developer"] },
   book: { bot: "Wonderful! Let's find your perfect room.\n\nWhich type of room are you looking for?", chips: ["🛏 Deluxe Room – ₹4,999/night", "👑 Suite – ₹8,999/night", "🌊 Pool View – ₹6,499/night", "🏠 Villa – ₹14,999/night"] },
   availability: { bot: "We have rooms available this weekend! 🎉\n\nCurrent availability:\n• Deluxe Room – 5 rooms left\n• Suite – 2 rooms left\n• Pool View – 3 rooms left\n• Villa – 1 available\n\nWould you like to book one?", chips: ["✅ Yes, Book Now", "🔙 Back to Menu"] },
   prices: { bot: "Here are our room rates:\n\n🛏 Deluxe Room — ₹4,999/night\n👑 Suite — ₹8,999/night\n🌊 Pool View — ₹6,499/night\n🏠 Villa — ₹14,999/night\n\nAll rates include breakfast & Wi-Fi.", chips: ["🏨 Book a Room", "🔙 Back to Menu"] },
-  contact: { bot: "You can reach us at:\n\n📞 +91 98765 43210\n📧 stay@dreamstay.in\n📍 Sector 18, Noida, UP\n⏰ Front desk open 24/7", chips: ["🏨 Book a Room", "🔙 Back to Menu"] },
+  contact: { bot: "You can reach us at:\n\n📞 +91 79068423xx\n📧 stay@dreamstay.in\n📍 Sector 60, Noida, UP\n⏰ Front desk open 24/7", chips: ["🏨 Book a Room", "🔙 Back to Menu"] },
   deluxe: { bot: "Excellent choice! 🛏\n\nDeluxe Room — ₹4,999/night\n✓ King-size bed\n✓ City view balcony\n✓ Free breakfast\n✓ High-speed Wi-Fi\n\nShall I confirm your booking?", chips: ["✅ Confirm Booking", "📅 Choose Dates", "🔙 Back"] },
   suite: { bot: "A superb selection! 👑\n\nLuxury Suite — ₹8,999/night\n✓ Separate living & bedroom\n✓ Jacuzzi & rain shower\n✓ Butler service\n✓ Panoramic city view\n\nShall I confirm your booking?", chips: ["✅ Confirm Booking", "📅 Choose Dates", "🔙 Back"] },
   pool: { bot: "Great taste! 🌊\n\nPool View Room — ₹6,499/night\n✓ Direct pool view\n✓ Private sun deck\n✓ Breakfast included\n\nShall I confirm your booking?", chips: ["✅ Confirm Booking", "📅 Choose Dates", "🔙 Back"] },
   villa: { bot: "The pinnacle of luxury! 🏠\n\nPrivate Villa — ₹14,999/night\n✓ 3 BHK private villa\n✓ Private pool & garden\n✓ Personal chef available\n✓ Airport transfer included\n\nShall I confirm your booking?", chips: ["✅ Confirm Booking", "📅 Choose Dates", "🔙 Back"] },
-  confirm: { bot: "🎉 Booking Confirmed!\n\nYour reservation at Dream Stay has been placed.\n\nConfirmation will be sent to your email shortly. Our concierge will contact you within 30 minutes.\n\nThank you for choosing Dream Stay ✦", chips: ["🏠 Back to Menu", "📞 Contact Hotel"] },
-  dates: { bot: "Please type your preferred check-in and check-out dates\n(e.g. '15 June to 18 June')\n\nI'll check availability right away!", chips: ["🔙 Back to Menu"] }
+  confirm: { bot: "😔 We're Sorry!\n\nUnfortunately, the room you selected is not available on your chosen dates.\n\nBut don't worry — our team will contact you very soon! 🙏\n\n📞 +91 79068423xx\n📧 stay@dreamstay.in\n\nHappy Journey & Thank you for choosing Dream Stay ✦", chips: ["🔙 Try Another Room", "📞 Contact Hotel", "🏠 Back to Menu"] },
+  dates: { bot: "Please type your preferred check-in and check-out dates\n(e.g. '15 June to 18 June')\n\nI'll check availability right away!", chips: ["🔙 Back to Menu"] },
+  developer: { bot: "👨‍💻 Meet the Developer!\n\nHi, I'm Deepanshu — the mind behind Dream Stay! 🚀\n\nFeel free to reach out:\n\n🐙 GitHub: github.com/Deepanshuraj999\n💼 LinkedIn: Deepanshu Verma\n📸 Instagram: @deepanshu___.rajput\n📧 Email: vdeepanshu618@gmail.com\n\nHappy to connect! ✦", chips: ["🏠 Back to Menu", "📞 Contact Hotel"] }
 };
 
 function addMsg(text, type, chips) {
@@ -199,6 +169,8 @@ function handleChip(text) {
   else if (t.includes('villa')) botReply('villa');
   else if (t.includes('confirm')) botReply('confirm');
   else if (t.includes('dates')) botReply('dates');
+  else if (t.includes('try another')) botReply('book');
+  else if (t.includes('meet developer')) botReply('developer');
   else botReply('start');
 }
 
@@ -215,11 +187,12 @@ function handleSend() {
     else if (v.includes('price') || v.includes('rate') || v.includes('cost') || v.includes('kitna')) addMsg(flow.prices.bot, 'bot', flow.prices.chips);
     else if (v.includes('available') || v.includes('khali')) addMsg(flow.availability.bot, 'bot', flow.availability.chips);
     else if (v.includes('contact') || v.includes('phone') || v.includes('email')) addMsg(flow.contact.bot, 'bot', flow.contact.chips);
+    else if (v.includes('Deepanshu') || v.includes('developer') || v.includes('who made')) addMsg(flow.developer.bot, 'bot', flow.developer.chips);
     else if (v.includes('deluxe')) addMsg(flow.deluxe.bot, 'bot', flow.deluxe.chips);
     else if (v.includes('suite')) addMsg(flow.suite.bot, 'bot', flow.suite.chips);
     else if (v.includes('pool')) addMsg(flow.pool.bot, 'bot', flow.pool.chips);
     else if (v.includes('villa')) addMsg(flow.villa.bot, 'bot', flow.villa.chips);
-    else addMsg("I can help you with room bookings, availability, pricing, and hotel info.\n\nWhat would you like to know?", 'bot', ["🏨 Book a Room", "📅 Check Availability", "💰 View Prices"]);
+    else addMsg("I can help you with room bookings, availability, pricing, and hotel info.\n\nWhat would you like to know?", 'bot', ["🏨 Book a Room", "📅 Check Availability", "💰 View Prices", "👨‍💻 Meet Developer"]);
   }, 750);
 }
 
